@@ -1,0 +1,31 @@
+services:
+  rag-api:
+    build: .
+    container_name: rag-api
+    ports:
+      - "8000:8000"
+    environment:
+      - QDRANT_HOST=qdrant-db
+      - QDRANT_PORT=6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - CHAT_MODEL=${CHAT_MODEL}
+    depends_on:
+      - qdrant-db
+    networks:
+      - rag-internal-net
+ 
+  qdrant-db:
+    image: qdrant/qdrant:v1.11.3
+    container_name: qdrant-db
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - rag-internal-net
+ 
+networks:
+  rag-internal-net:
+    driver: bridge
+ 
+volumes:
+  qdrant_storage:
